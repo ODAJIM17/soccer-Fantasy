@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SFS.Web.Shared.Resources {
+namespace SFS.Domain.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SFS.Web.Shared.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFS.Web.Shared.Resources.Literals", typeof(Literals).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFS.Domain.Resources.Literals", typeof(Literals).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -70,11 +70,47 @@ namespace SFS.Web.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmation.
+        /// </summary>
+        public static string Confirmation {
+            get {
+                return ResourceManager.GetString("Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Countries.
         /// </summary>
         public static string Countries {
             get {
                 return ResourceManager.GetString("Countries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Country with this name already exists..
+        /// </summary>
+        public static string CountryDuplicate {
+            get {
+                return ResourceManager.GetString("CountryDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create.
+        /// </summary>
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
             }
         }
         
@@ -97,11 +133,29 @@ namespace SFS.Web.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure to delete the {0}: {1}?.
+        /// </summary>
+        public static string DeleteConfirm {
+            get {
+                return ResourceManager.GetString("DeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string Edit {
             get {
                 return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
             }
         }
         
@@ -124,6 +178,15 @@ namespace SFS.Web.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to leave this page and lose your changes?.
+        /// </summary>
+        public static string LeaveAndLoseChanges {
+            get {
+                return ResourceManager.GetString("LeaveAndLoseChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New.
         /// </summary>
         public static string New {
@@ -133,11 +196,56 @@ namespace SFS.Web.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No records to shoe.
+        ///   Looks up a localized string similar to No records to show.
         /// </summary>
         public static string NoRecords {
             get {
                 return ResourceManager.GetString("NoRecords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record created successfully.
+        /// </summary>
+        public static string RecordCreatedOk {
+            get {
+                return ResourceManager.GetString("RecordCreatedOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record deleted successfully..
+        /// </summary>
+        public static string RecordDeletedOk {
+            get {
+                return ResourceManager.GetString("RecordDeletedOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record saved successfully..
+        /// </summary>
+        public static string RecordSavedOk {
+            get {
+                return ResourceManager.GetString("RecordSavedOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return.
+        /// </summary>
+        public static string Return {
+            get {
+                return ResourceManager.GetString("Return", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save  Changes.
+        /// </summary>
+        public static string SaveChanges {
+            get {
+                return ResourceManager.GetString("SaveChanges", resourceCulture);
             }
         }
         
@@ -156,6 +264,15 @@ namespace SFS.Web.Shared.Resources {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
     }

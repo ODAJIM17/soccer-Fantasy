@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.EntityFrameworkCore;
 using SFS.Infrastructure.Context;
 using SFS.Infrastructure.Repositories;
@@ -13,6 +12,7 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddLocalization();
+builder.Services.AddSweetAlert2();
 
 builder.Services.AddDbContextFactory<SoccerDbContext>(options =>
 {

@@ -1,0 +1,87 @@
+﻿@page "/countries/edit/{Id:int}"
+
+<h3>@Localizer["Edit"] @Localizer["Country"]</h3>
+
+@if (country is null)
+{
+    <Loading />
+}
+else
+{
+    <CountryForm @ref="countryForm" Country="country" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+@code {
+
+    private Country? country;
+    private CountryForm? countryForm;
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private ICountryRepository Repository { get; set; } = null!;
+    [Inject] private SweetAlertService SweetAlertService { get; set; } = null!;
+    [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
+
+    [Parameter] public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseHttp = await Repository.GetByIdAsync(Id);
+        if (responseHttp == null)
+        {
+            NavigationManager.NavigateTo("countries");
+        }
+        else
+        {
+            country = responseHttp;
+        }
+
+        // return;
+    }
+
+    private async Task EditAsync()
+    {
+
+        try
+        {
+
+            await Repository.UpdateAsync(country!);
+
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException dbUpdateException)
+        {
+            if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+            {
+                await SweetAlertService.FireAsync(Localizer["Error"], @Localizer["CountryDuplicate"], SweetAlertIcon.Error);
+                return;
+            }
+            else
+            {
+                await SweetAlertService.FireAsync(Localizer["Error"], dbUpdateException.InnerException.Message, SweetAlertIcon.Error);
+                return;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await SweetAlertService.FireAsync(Localizer["Error"], ex.Message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+
+        var toast = SweetAlertService.Mixin(new SweetAlertOptions
+        {
+            Toast = true,
+            Position = SweetAlertPosition.BottomEnd,
+            ShowConfirmButton = true,
+            Timer = 3000
+        });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: Localizer["RecordSavedOk"]);
+    }
+
+    private void Return()
+    {
+        countryForm!.FormPostedSuccessfully = true;
+        NavigationManager.NavigateTo("countries");
+    }
+}
