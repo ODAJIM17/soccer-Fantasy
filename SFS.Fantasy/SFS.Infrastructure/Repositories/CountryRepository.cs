@@ -24,7 +24,9 @@ namespace SFS.Infrastructure.Repositories
 
         public async Task<List<Country>> GetAllAsync()
         {
-            var country = await _context.Countries.ToListAsync();
+            var country = await _context.Countries
+                .Include(x => x.Teams)
+                .ToListAsync();
             return country;
         }
 
@@ -67,10 +69,12 @@ namespace SFS.Infrastructure.Repositories
             .ToListAsync();
         }
 
-        public async Task<Country?> GetByIdAsync(int id)
+        public async Task<Country> GetByIdAsync(int id)
         {
-            var country = await _context.Countries.FirstOrDefaultAsync(x => x.Id == id);
-            return country;
+            var country = await _context
+                .Countries.Include(x => x.Teams)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return country!;
         }
 
         public async Task UpdateAsync(Country country)

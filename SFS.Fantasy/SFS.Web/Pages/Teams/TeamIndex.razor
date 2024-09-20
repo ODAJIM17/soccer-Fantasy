@@ -1,34 +1,39 @@
-﻿@page "/countries"
+﻿@page "/teams"
 
-<h3>@Localizer["Countries"]</h3>
+<h3>@Localizer["Teams"]</h3>
 
 <div class="mb-3">
-    <a class="btn btn-sm btn-primary" href="/countries/create">@Localizer["New"] @Localizer["Country"]</a>
+    <a class="btn btn-sm btn-primary" href="/teams/create">@Localizer["New"] @Localizer["Team"]</a>
 </div>
 
-<GenericList MyList="countries">
+<GenericList MyList="Teams">
     <Body>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>@Localizer["Country"]</th>
-                    <th># @Localizer["Teams"]</th>
+                    <th>@Localizer["Team"]</th>
+                    <th># @Localizer["Image"]</th>
+                    <th># @Localizer["Country"]</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var country in countries!)
+                @foreach (var team in Teams!)
                 {
                     <tr>
                         <td>
-                            @country.Name
+                            @team.Name
                         </td>
                         <td>
-                            @country.TeamsCount
+                            <img src="@team.ImageFull" style="width:80px;" />
                         </td>
                         <td>
-                            <a class="btn btn-warning" href="/countries/edit/@country.Id">@Localizer["Edit"]</a>
-                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(country))>@Localizer["Delete"]</button>
+                            @team.Country.Name
+                        </td>
+
+                        <td>
+                            <a class="btn btn-warning" href="/teams/edit/@team.Id">@Localizer["Edit"]</a>
+                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(team))>@Localizer["Delete"]</button>
                         </td>
                     </tr>
                 }
@@ -37,14 +42,14 @@
     </Body>
 </GenericList>
 
-@code{
+@code {
 
+    [Inject] private ITeamRepository Repository { get; set; } = null!;
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private SweetAlertService SweetAlertService { get; set; } = null!;
-    [Inject] private ICountryRepository Repository { get; set; } = null!;
 
-    private List<Country>? countries;
+    private List<Team>? Teams { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,15 +59,15 @@
 
     private async Task LoadAsync()
     {
-        countries = await Repository.GetAllAsync();
+        Teams = await Repository.GetAllAsync();
     }
 
-    private async Task DeleteAsync(Country country)
+    private async Task DeleteAsync(Team team)
     {
         var result = await SweetAlertService.FireAsync(new SweetAlertOptions
         {
             Title = Localizer["Confirmation"],
-            Text = string.Format(Localizer["DeleteConfirm"], Localizer["Country"], country.Name),
+            Text = string.Format(Localizer["DeleteConfirm"], Localizer["Team"], team.Name),
             Icon = SweetAlertIcon.Question,
             ShowCancelButton = true,
             CancelButtonText = Localizer["Cancel"]
@@ -76,7 +81,7 @@
         }
         try
         {
-            await Repository.DeleteByIdAsync(country);
+            await Repository.DeleteByIdAsync(team);
         }
         catch (Exception ex)
         {

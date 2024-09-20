@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SFS.Domain.Resources;
+using System.ComponentModel.DataAnnotations;
 
 namespace SFS.Domain.Entities
 {
@@ -6,8 +7,9 @@ namespace SFS.Domain.Entities
     {
         public int Id { get; set; }
 
-        [MaxLength(100)]
-        [Required]
+        [Display(Name = "Country", ResourceType = typeof(Literals))]
+        [MaxLength(100, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
+        [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
         public string Name { get; set; } = null!;
 
         public ICollection<Team>? Teams { get; set; }

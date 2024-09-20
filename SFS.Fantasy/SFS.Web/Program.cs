@@ -4,6 +4,8 @@ using MudBlazor.Services;
 using SFS.Infrastructure.Context;
 using SFS.Infrastructure.Repositories;
 using SFS.Services.Interfaces;
+using SFS.Web.Data;
+using SFS.Web.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,11 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IFileStorage, FileStorage>();
+
+builder.Services.AddTransient<SeedDb>();
+
 builder.Services.AddLocalization();
 builder.Services.AddSweetAlert2();
 builder.Services.AddMudServices();
@@ -22,6 +29,16 @@ builder.Services.AddDbContextFactory<SoccerDbContext>(options =>
 });
 
 var app = builder.Build();
+
+SeedData(app);
+
+void SeedData(WebApplication app)
+{
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+    using var scope = scopedFactory!.CreateScope();
+    var service = scope.ServiceProvider.GetService<SeedDb>();
+    service!.SeedAsync().Wait();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
