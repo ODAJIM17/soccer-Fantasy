@@ -26,7 +26,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         var responseHttp = await Repository.GetByIdAsync(Id);
-        if (responseHttp == null)
+        if (responseHttp is null)
         {
             NavigationManager.NavigateTo("countries");
         }
@@ -35,7 +35,7 @@ else
             country = responseHttp;
         }
 
-        // return;
+        return;
     }
 
     private async Task EditAsync()

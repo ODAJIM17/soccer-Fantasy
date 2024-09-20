@@ -11,7 +11,8 @@
     </div>
 
     <button class="btn btn-primary" type="submit">@Localizer["SaveChanges"]</button>
-    <button class="btn btn-success" @onclick="ReturnAction">@Localizer["Return"]</button>
+    @*<button class="btn btn-success" @onclick="ReturnAction">@Localizer["Return"]</button>*@
+    <a href="/countries" class="btn btn-success">@Localizer["Return"]</a>
 </EditForm>
 
 @code {

@@ -1,5 +1,6 @@
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 using SFS.Infrastructure.Context;
 using SFS.Infrastructure.Repositories;
 using SFS.Services.Interfaces;
@@ -13,6 +14,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddLocalization();
 builder.Services.AddSweetAlert2();
+builder.Services.AddMudServices();
 
 builder.Services.AddDbContextFactory<SoccerDbContext>(options =>
 {
