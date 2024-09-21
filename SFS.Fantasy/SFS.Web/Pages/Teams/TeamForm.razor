@@ -1,0 +1,115 @@
+﻿<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>@Localizer["Team"]:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@TeamDTO.Name" />
+            <ValidationMessage For="@(() => TeamDTO.Name)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>@Localizer["Country"]:</label>
+        <div>
+            <select class="form-select" @bind="TeamDTO.CountryId">
+                <option value="0">@Localizer["SelectACountry"]</option>
+                @if (countries is not null)
+                {
+                    @foreach (var country in countries)
+                    {
+                        <option value="@country.Id">@country.Name</option>
+                    }
+                }
+            </select>
+            <ValidationMessage For="@(() => TeamDTO.CountryId)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <InputImg Label=@Localizer["Image"] ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">@Localizer["SaveChanges"]</button>
+    @*<button class="btn btn-success" @onclick="ReturnAction">@Localizer["Return"]</button>*@
+    <a href="/teams" class="btn btn-success">@Localizer["Return"]</a>
+</EditForm>
+
+@code {
+
+    private EditContext editContext = null!;
+
+    protected override void OnInitialized()
+    {
+        editContext = new(TeamDTO);
+    }
+
+    [EditorRequired, Parameter] public TeamDTO TeamDTO { get; set; } = null!;
+
+    [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
+    [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
+
+    public bool FormPostedSuccessfully { get; set; } = false;
+
+    [Inject] private SweetAlertService SweetAlertService { get; set; } = null!;
+    [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
+    [Inject] private ITeamRepository Repository { get; set; } = null!;
+
+    private List<Country>? countries;
+    private string? imageUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCountriesAsync();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (!string.IsNullOrEmpty(TeamDTO.Image))
+        {
+            imageUrl = TeamDTO.Image;
+            TeamDTO.Image = null;
+        }
+    }
+
+    private async Task LoadCountriesAsync()
+    {
+        var response = await Repository.GetComboAsync();
+
+        countries = response.ToList();
+    }
+
+    private void ImageSelected(string imagenBase64)
+    {
+        TeamDTO.Image = imagenBase64;
+        imageUrl = null;
+    }
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formWasEdited = editContext.IsModified();
+
+        if (!formWasEdited || FormPostedSuccessfully)
+        {
+            return;
+        }
+
+        var result = await SweetAlertService.FireAsync(new SweetAlertOptions
+        {
+            Title = Localizer["Confirmation"],
+            Text = Localizer["LeaveAndLoseChanges"],
+            Icon = SweetAlertIcon.Warning,
+            ShowCancelButton = true,
+            CancelButtonText = Localizer["Cancel"],
+        });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        context.PreventNavigation();
+    }
+
+}

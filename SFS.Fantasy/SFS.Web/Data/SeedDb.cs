@@ -1,16 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SFS.Domain.Entities;
 using SFS.Infrastructure.Context;
+using SFS.Services.Interfaces;
 
 namespace SFS.Web.Data
 {
     public class SeedDb
     {
         private readonly SoccerDbContext _context;
+        private readonly IFileStorage _fileStorage;
 
-        public SeedDb(IDbContextFactory<SoccerDbContext> factory)
+        public SeedDb(IDbContextFactory<SoccerDbContext> factory, IFileStorage fileStorage)
         {
             _context = factory.CreateDbContext();
+            _fileStorage = fileStorage;
         }
 
         public async Task SeedAsync()
@@ -35,14 +38,14 @@ namespace SFS.Web.Data
             {
                 foreach (var country in _context.Countries)
                 {
-                    _context.Teams.Add(new Team { Name = country.Name, Country = country! });
-                    if (country.Name == "Colombia")
+                    var imagePath = string.Empty;
+                    var filePath = $"{Environment.CurrentDirectory}\\Images\\Flags\\{country.Name}.png";
+                    if (File.Exists(filePath))
                     {
-                        _context.Teams.Add(new Team { Name = "Medellín", Country = country! });
-                        _context.Teams.Add(new Team { Name = "Nacional", Country = country! });
-                        _context.Teams.Add(new Team { Name = "Millonarios", Country = country! });
-                        _context.Teams.Add(new Team { Name = "Junior", Country = country! });
+                        var fileBytes = File.ReadAllBytes(filePath);
+                        imagePath = await _fileStorage.SaveFileAsync(fileBytes, "jpg", "teams");
                     }
+                    _context.Teams.Add(new Team { Name = country.Name, Country = country!, Image = imagePath });
                 }
 
                 await _context.SaveChangesAsync();

@@ -1,4 +1,4 @@
-﻿namespace SFS.Web.Helpers
+﻿namespace SFS.Services.Interfaces
 {
     public interface IFileStorage
     {

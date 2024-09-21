@@ -3,11 +3,11 @@ using Azure.Storage.Blobs.Models;
 
 namespace SFS.Web.Helpers
 {
-    public class FileStorage : IFileStorage
+    public class FileStorages : IFileStorages
     {
         private readonly string _connectionString;
 
-        public FileStorage(IConfiguration configuration)
+        public FileStorages(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("AzureStorage")!;
         }

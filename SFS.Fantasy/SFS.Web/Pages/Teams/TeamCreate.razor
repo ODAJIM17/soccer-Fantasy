@@ -1,0 +1,61 @@
+﻿@page "/teams/create"
+
+<h3>@Localizer["Create"] @Localizer["Team"]</h3>
+
+<TeamForm @ref="teamForm" TeamDTO="teamDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+
+    private TeamForm? teamForm;
+    private TeamDTO teamDTO = new();
+
+    [Inject] private ITeamRepository Repository { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private SweetAlertService SweetAlertService { get; set; } = null!;
+    [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
+
+    private async Task CreateAsync()
+    {
+        try
+        {
+            await Repository.AddAsync(teamDTO);
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException dbUpdateException)
+        {
+            if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+            {
+                await SweetAlertService.FireAsync(Localizer["Error"], @Localizer["CountryDuplicate"], SweetAlertIcon.Error);
+                return;
+            }
+            else
+            {
+                await SweetAlertService.FireAsync(Localizer["Error"], dbUpdateException.InnerException.Message, SweetAlertIcon.Error);
+                return;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await SweetAlertService.FireAsync(Localizer["Error"], ex.Message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+
+        var toast = SweetAlertService.Mixin(new SweetAlertOptions
+        {
+            Toast = true,
+            Position = SweetAlertPosition.BottomEnd,
+            ShowConfirmButton = true,
+            Timer = 3000
+        });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: Localizer["RecordCreatedOk"]);
+    }
+
+    private void Return()
+    {
+        teamForm!.FormPostedSuccessfully = true;
+        NavigationManager.NavigateTo("/teams");
+    }
+
+}

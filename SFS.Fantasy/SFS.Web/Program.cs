@@ -16,6 +16,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IFileStorage, FileStorage>();
+builder.Services.AddScoped<IFileStorages, FileStorages>();
 
 builder.Services.AddTransient<SeedDb>();
 

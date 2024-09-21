@@ -1,11 +1,12 @@
-﻿using SFS.Domain.Entities;
+﻿using SFS.Domain.DTOs;
+using SFS.Domain.Entities;
 using SFS.Domain.Responses;
 
 namespace SFS.Services.Interfaces;
 
 public interface ITeamRepository
 {
-    Task AddAsync(Team team);
+    Task AddAsync(TeamDTO teamDTO);
 
     Task<List<Team>> GetAllAsync();
 
@@ -16,4 +17,6 @@ public interface ITeamRepository
     Task DeleteByIdAsync(Team team);
 
     Task<ActionResponse<IEnumerable<Team>>> GetAsync();
+
+    Task<IEnumerable<Country>> GetComboAsync();
 }
