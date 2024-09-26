@@ -12,11 +12,13 @@ public interface ITeamRepository
 
     Task<Team> GetByIdAsync(int id);
 
-    Task UpdateAsync(Team team);
+    Task<ActionResponse<Team>> UpdateAsync(TeamDTO teamDTO);
 
     Task DeleteByIdAsync(Team team);
 
     Task<ActionResponse<IEnumerable<Team>>> GetAsync();
 
     Task<IEnumerable<Country>> GetComboAsync();
+
+    Task<IEnumerable<Team>> GetComboAsync(int countryId);
 }

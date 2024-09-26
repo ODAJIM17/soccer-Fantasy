@@ -199,4 +199,7 @@
   <data name="SelectACountry" xml:space="preserve">
     <value>Select a country...</value>
   </data>
+  <data name="TeamDuplicate" xml:space="preserve">
+    <value>Team with this name already exists.</value>
+  </data>
 </root>

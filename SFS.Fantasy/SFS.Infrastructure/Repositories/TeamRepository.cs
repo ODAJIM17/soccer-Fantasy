@@ -5,6 +5,7 @@ using SFS.Domain.Responses;
 using SFS.Infrastructure.Context;
 using SFS.Services;
 using SFS.Services.Interfaces;
+using System.Diagnostics.Metrics;
 
 namespace SFS.Infrastructure.Repositories
 {
@@ -83,9 +84,12 @@ namespace SFS.Infrastructure.Repositories
             };
         }
 
-        public Task<Team> GetByIdAsync(int id)
+        public async Task<Team> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var team = await _context.Teams
+                 .Include(x => x.Country)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return team!;
         }
 
         public async Task<IEnumerable<Country>> GetComboAsync()
@@ -96,9 +100,71 @@ namespace SFS.Infrastructure.Repositories
             return countries;
         }
 
-        public Task UpdateAsync(Team team)
+        public async Task<IEnumerable<Team>> GetComboAsync(int countryId)
         {
-            throw new NotImplementedException();
+            return await _context.Teams
+                .Where(x => x.CountryId == countryId)
+                .OrderBy(x => x.Name)
+                .ToListAsync();
+        }
+
+        public async Task<ActionResponse<Team>> UpdateAsync(TeamDTO teamDTO)
+        {
+            var currentTeam = await _context.Teams.FindAsync(teamDTO.Id);
+            if (currentTeam == null)
+            {
+                return new ActionResponse<Team>
+                {
+                    WasSuccess = false,
+                    Message = "ERR005"
+                };
+            }
+
+            var country = await _context.Countries.FindAsync(teamDTO.CountryId);
+            if (country == null)
+            {
+                return new ActionResponse<Team>
+                {
+                    WasSuccess = false,
+                    Message = "ERR004"
+                };
+            }
+
+            if (!string.IsNullOrEmpty(teamDTO.Image))
+            {
+                var imageBase64 = Convert.FromBase64String(teamDTO.Image!);
+                currentTeam.Image = await _fileStorage.SaveFileAsync(imageBase64, ".jpg", "teams");
+            }
+
+            currentTeam.Country = country;
+            currentTeam.Name = teamDTO.Name;
+
+            _context.Update(currentTeam);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return new ActionResponse<Team>
+                {
+                    WasSuccess = true,
+                    Result = currentTeam
+                };
+            }
+            catch (DbUpdateException)
+            {
+                return new ActionResponse<Team>
+                {
+                    WasSuccess = false,
+                    Message = "ERR003"
+                };
+            }
+            catch (Exception exception)
+            {
+                return new ActionResponse<Team>
+                {
+                    WasSuccess = false,
+                    Message = exception.Message
+                };
+            }
         }
     }
 }

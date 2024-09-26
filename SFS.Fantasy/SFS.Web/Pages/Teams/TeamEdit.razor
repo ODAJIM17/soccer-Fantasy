@@ -1,0 +1,94 @@
+﻿@page "/teams/edit/{Id:int}"
+
+<h3>@Localizer["Edit"] @Localizer["Team"]</h3>
+
+@if (teamDTO is null)
+{
+    <Loading />
+}
+else
+{
+    <TeamForm @ref="teamForm" TeamDTO="teamDTO" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+@code {
+
+    private TeamDTO? teamDTO;
+    private TeamForm? teamForm;
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private ITeamRepository Repository { get; set; } = null!;
+    [Inject] private SweetAlertService SweetAlertService { get; set; } = null!;
+    [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
+
+    [Parameter] public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Repository.GetByIdAsync(Id);
+        if (response is null)
+        {
+            NavigationManager.NavigateTo("teams");
+        }
+        else
+        {
+            var team = response;
+            teamDTO = new TeamDTO()
+            {
+                Id = team.Id,
+                Name = team.Name,
+                Image = team.Image,
+                CountryId = team.CountryId
+            };
+
+        }
+    }
+
+    private async Task EditAsync()
+    {
+
+        try
+        {
+
+            await Repository.UpdateAsync(teamDTO!);
+
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException dbUpdateException)
+        {
+            if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+            {
+                await SweetAlertService.FireAsync(Localizer["Error"], @Localizer["TeamDuplicate"], SweetAlertIcon.Error);
+                return;
+            }
+            else
+            {
+                await SweetAlertService.FireAsync(Localizer["Error"], dbUpdateException.InnerException.Message, SweetAlertIcon.Error);
+                return;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await SweetAlertService.FireAsync(Localizer["Error"], ex.Message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+
+        var toast = SweetAlertService.Mixin(new SweetAlertOptions
+        {
+            Toast = true,
+            Position = SweetAlertPosition.BottomEnd,
+            ShowConfirmButton = true,
+            Timer = 3000
+        });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: Localizer["RecordSavedOk"]);
+    }
+
+    private void Return()
+    {
+        teamForm!.FormPostedSuccessfully = true;
+        NavigationManager.NavigateTo("teams");
+    }
+
+}

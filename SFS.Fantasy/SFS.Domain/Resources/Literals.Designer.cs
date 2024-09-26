@@ -340,6 +340,15 @@ namespace SFS.Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Team with this name already exists..
+        /// </summary>
+        public static string TeamDuplicate {
+            get {
+                return ResourceManager.GetString("TeamDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Teams.
         /// </summary>
         public static string Teams {
